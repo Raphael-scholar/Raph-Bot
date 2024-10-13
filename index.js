@@ -4,16 +4,20 @@ const logger = require('./src/utils/logger');
 const bot = require('./src/bot');
 const config = require('./src/config');
 
-mongoose.connect(config.dbUrl, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => {
+const startBot = async () => {
+  try {
+    await mongoose.connect(config.dbUrl, { useNewUrlParser: true, useUnifiedTopology: true });
     logger.info('Connected to MongoDB');
-    bot.launch();
-    logger.info(`${config.botName} is running`);
-  })
-  .catch((err) => {
-    logger.error('MongoDB connection error:', err);
-    process.exit(1);
-  });
 
-process.once('SIGINT', () => bot.stop('SIGINT'));
-process.once('SIGTERM', () => bot.stop('SIGTERM'));
+    await bot.launch();
+    logger.info(`${config.botName} is running`);
+
+    process.once('SIGINT', () => bot.stop('SIGINT'));
+    process.once('SIGTERM', () => bot.stop('SIGTERM'));
+  } catch (error) {
+    logger.error('Error starting the bot:', error);
+    process.exit(1);
+  }
+};
+
+startBot();
