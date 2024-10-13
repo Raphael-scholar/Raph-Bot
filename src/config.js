@@ -1,0 +1,17 @@
+module.exports = {
+  botName: 'Raph Bot',
+  version: '1.0.0',
+  dbUrl: process.env.MONGODB_URI,
+  botToken: process.env.BOT_TOKEN,
+  weatherApiKey: process.env.WEATHER_API_KEY,
+  translationApiKey: process.env.TRANSLATION_API_KEY,
+  ownerId: process.env.OWNER_ID,
+  logLevel: process.env.LOG_LEVEL || 'info',
+  rateLimitMax: 5,
+  rateLimitWindow: 60000,
+  defaultLanguage: 'en',
+  supportedLanguages: ['en', 'es', 'fr', 'de', 'it', 'ja', 'ko', 'ru', 'zh'],
+  timeZone: 'UTC',
+  maxReminders: 10,
+  reminderCheckInterval: 60000,
+};
