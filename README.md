@@ -32,7 +32,7 @@ Raph Bot is an advanced Telegram bot created by Raphael, designed to provide var
 3. Create a `.env` file in the root directory and add the following environment variables:
    ```
    BOT_TOKEN=your_telegram_bot_token_here
-   MONGODB_URI=mongodb+srv://mateochatbot:xdtL2bYQ9eV3CeXM@gerald.r2hjy.mongodb.net/
+   MONGODB_URI=MONGODB_URL
    WEATHER_API_KEY=your_weather_api_key_here
    TRANSLATION_API_KEY=your_translation_api_key_here
    OWNER_ID=your_telegram_user_id_here
