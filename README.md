@@ -20,7 +20,7 @@ Raph Bot is an advanced Telegram bot created by Raphael, designed to provide var
 
 1. Clone the repository:
    ```
-   git clone https://github.com/yourusername/raph-bot.git
+   git clone https://github.com/Raphael-scholar/Raph-Bot.git
    cd raph-bot
    ```
 
