@@ -4,11 +4,10 @@ const path = require('path');
 const config = require('../config');
 
 module.exports = {
-  name: 'help',
+  command: 'help',
   description: 'Display bot commands and information',
-  usage: '/help [command]',
-  category: 'General',
-  async execute(ctx, args) {
+  async handler(ctx) {
+    const args = ctx.message.text.split(' ').slice(1);
     const commandsPath = path.join(__dirname, '..', 'commands');
     const commandFiles = await fs.readdir(commandsPath);
     const commands = await Promise.all(commandFiles
@@ -16,7 +15,7 @@ module.exports = {
       .map(async file => {
         const command = require(path.join(commandsPath, file));
         return {
-          name: command.name,
+          name: command.command,
           description: command.description,
           usage: command.usage,
           category: command.category
@@ -73,60 +72,43 @@ function getCommandInfo(command) {
 `;
 }
 
-module.exports.handleCallbacks = async (ctx) => {
-  const callbackQuery = ctx.callbackQuery;
-  const action = callbackQuery.data;
-
-  switch (action) {
-    case 'command_stats':
-      await showCommandStats(ctx);
-      break;
-    case 'search_commands':
-      await ctx.answerCbQuery();
-      await ctx.reply('Enter a keyword to search for commands:');
-      ctx.scene.enter('searchCommands');
-      break;
-    case 'show_categories':
-      await showCategories(ctx);
-      break;
-    case 'check_updates':
-      await checkForUpdates(ctx);
-      break;
-  }
-};
-
-async function showCommandStats(ctx) {
-  const statsMessage = `
+module.exports.handleCallbacks = {
+  command_stats: async (ctx) => {
+    const statsMessage = `
 ╭───────⦿ COMMAND STATISTICS ⦿───────╮
 │ Coming soon!
 ╰───────⦿ STAY TUNED ⦿───────╯
 `;
-  await ctx.answerCbQuery();
-  await ctx.editMessageText(statsMessage, { parse_mode: 'Markdown' });
-}
-
-async function showCategories(ctx) {
-  const commandsPath = path.join(__dirname, '..', 'commands');
-  const commandFiles = await fs.readdir(commandsPath);
-  const categories = [...new Set(commandFiles
-    .map(file => require(path.join(commandsPath, file)).category || 'Uncategorized'))];
-  const categoryList = categories.map((category, index) => `│ ${index + 1}. ${category}`).join('\n');
-  const categoryMessage = `
+    await ctx.answerCbQuery();
+    await ctx.editMessageText(statsMessage, { parse_mode: 'Markdown' });
+  },
+  search_commands: async (ctx) => {
+    await ctx.answerCbQuery();
+    await ctx.reply('Enter a keyword to search for commands:');
+    ctx.scene.enter('searchCommands');
+  },
+  show_categories: async (ctx) => {
+    const commandsPath = path.join(__dirname, '..', 'commands');
+    const commandFiles = await fs.readdir(commandsPath);
+    const categories = [...new Set(commandFiles
+      .map(file => require(path.join(commandsPath, file)).category || 'Uncategorized'))];
+    const categoryList = categories.map((category, index) => `│ ${index + 1}. ${category}`).join('\n');
+    const categoryMessage = `
 ╭───────⦿ COMMAND CATEGORIES ⦿───────╮
 ${categoryList}
 ╰───────⦿ TOTAL: ${categories.length} ⦿───────╯
 `;
-  await ctx.answerCbQuery();
-  await ctx.editMessageText(categoryMessage, { parse_mode: 'Markdown' });
-}
-
-async function checkForUpdates(ctx) {
-  const updateMessage = `
+    await ctx.answerCbQuery();
+    await ctx.editMessageText(categoryMessage, { parse_mode: 'Markdown' });
+  },
+  check_updates: async (ctx) => {
+    const updateMessage = `
 ╭───────⦿ UPDATE CHECK ⦿───────╮
 │ Current version: ${config.version}
 │ Status: Up to date
 ╰───────⦿ END ⦿───────╯
 `;
-  await ctx.answerCbQuery();
-  await ctx.editMessageText(updateMessage, { parse_mode: 'Markdown' });
-}
+    await ctx.answerCbQuery();
+    await ctx.editMessageText(updateMessage, { parse_mode: 'Markdown' });
+  }
+};
